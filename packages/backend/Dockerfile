@@ -1,6 +1,8 @@
 # packages/backend/Dockerfile
 FROM node:18-alpine AS deps
 WORKDIR /app
+RUN rm -rf ./* || true
+
 # Copy root package.json and workspace package.json
 COPY package*.json ./
 COPY packages/backend/package*.json ./packages/backend/

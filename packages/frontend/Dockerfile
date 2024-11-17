@@ -18,8 +18,10 @@ RUN npm run build -w @carbon-impact/frontend
 
 FROM node:18-alpine AS runner
 WORKDIR /app
+RUN rm -rf ./* || true
+
 ENV NODE_ENV=production
-# Copy necessary files
+# Copy necessary files 
 COPY --from=builder /app/packages/frontend/next.config.js ./
 COPY --from=builder /app/packages/frontend/.next ./.next
 COPY --from=builder /app/packages/frontend/public ./public
