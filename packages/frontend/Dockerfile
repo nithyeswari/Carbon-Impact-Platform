@@ -1,29 +1,31 @@
+# packages/frontend/Dockerfile
 FROM node:18-alpine AS deps
+# Set working directory
 WORKDIR /app
-COPY package*.json ./
-COPY packages/frontend/package*.json ./packages/frontend/
+# Copy package files
+COPY package.json package-lock.json* ./
+COPY packages/frontend/package.json ./packages/frontend/
+# Install dependencies
 RUN npm install
 
 FROM node:18-alpine AS builder
 WORKDIR /app
+# Copy all node_modules and source
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages/frontend/node_modules ./packages/frontend/node_modules
-COPY packages/frontend ./packages/frontend
-COPY package*.json ./
-RUN cd packages/frontend && npm run build
+COPY . .
+# Build the project
+RUN npm run build -w @carbon-impact/frontend
 
 FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-
-# Copy built next.js application
+# Copy necessary files
+COPY --from=builder /app/packages/frontend/next.config.js ./
 COPY --from=builder /app/packages/frontend/.next ./.next
 COPY --from=builder /app/packages/frontend/public ./public
-COPY --from=builder /app/packages/frontend/package.json ./package.json
-
-# Install production dependencies only
-RUN npm install --production
+COPY --from=builder /app/packages/frontend/package.json ./
+# Install production dependencies
+RUN npm install --only=production
 
 EXPOSE 3000
-
 CMD ["npm", "start"]
