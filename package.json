@@ -1,0 +1,19 @@
+{
+    "name": "carbon-impact-platform",
+    "private": true,
+    "workspaces": [
+      "packages/*"
+    ],
+    "scripts": {
+      "dev": "docker-compose up",
+      "build": "lerna run build",
+      "start": "lerna run start",
+      "test": "lerna run test"
+    },
+    "devDependencies": {
+      "lerna": "^6.0.0",
+      "typescript": "^4.9.0",
+      "prettier": "^2.8.0",
+      "eslint": "^8.0.0"
+    }
+  }
